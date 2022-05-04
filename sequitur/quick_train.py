@@ -10,6 +10,7 @@ from torch.nn import MSELoss
 # UTILITIES
 ###########
 
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 def instantiate_model(model, train_set, encoding_dim, **kwargs):
     if model.__name__ in ("LINEAR_AE", "LSTM_AE"):
@@ -22,8 +23,7 @@ def instantiate_model(model, train_set, encoding_dim, **kwargs):
 
 
 def train_model(model, train_set, verbose, lr, epochs, denoise):
-    # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    # model.to(device)
+    model.to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
     criterion = MSELoss(size_average=False)
 
@@ -31,14 +31,16 @@ def train_model(model, train_set, verbose, lr, epochs, denoise):
     for epoch in range(1, epochs + 1):
         model.train()
 
-        # # Reduces learning rate every 50 epochs
-        # if not epoch % 50:
-        #     for param_group in optimizer.param_groups:
-        #         param_group["lr"] = lr * (0.993 ** epoch)
+        # Reduces learning rate
+        if not epoch % 10:
+            for param_group in optimizer.param_groups:
+                param_group["lr"] = lr * 0.7
 
         losses = []
         for x in train_set:
             optimizer.zero_grad()
+
+            x = x.to(device)
 
             # Forward pass
             x_prime = model(x)
@@ -62,7 +64,7 @@ def train_model(model, train_set, verbose, lr, epochs, denoise):
 
 def get_encodings(model, train_set):
     model.eval()
-    encodings = [model.encoder(x) for x in train_set]
+    encodings = [model.encoder(x.to(device)) for x in train_set]
     return encodings
 
 

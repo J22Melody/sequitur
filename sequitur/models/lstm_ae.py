@@ -78,7 +78,7 @@ class Decoder(nn.Module):
 
 
 class LSTM_AE(nn.Module):
-    def __init__(self, input_dim, encoding_dim, h_dims=[], h_activ=nn.Sigmoid(),
+    def __init__(self, input_dim, encoding_dim, h_dims=[64], h_activ=nn.Sigmoid(),
                  out_activ=nn.Tanh()):
         super(LSTM_AE, self).__init__()
 
