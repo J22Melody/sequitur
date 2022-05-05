@@ -32,9 +32,9 @@ def train_model(model, train_set, verbose, lr, epochs, denoise):
         model.train()
 
         # Reduces learning rate
-        if not epoch % 10:
-            for param_group in optimizer.param_groups:
-                param_group["lr"] = lr * 0.7
+        # if not epoch % 10:
+        #     for param_group in optimizer.param_groups:
+        #         param_group["lr"] = lr * 0.7
 
         losses = []
         for x in train_set:
